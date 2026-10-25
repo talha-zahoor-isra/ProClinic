@@ -67,7 +67,7 @@ jobs:
           tags: proclinic:ci
 
       - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         continue-on-error: true
         with:
           image-ref: proclinic:ci
