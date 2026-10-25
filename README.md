@@ -1,6 +1,6 @@
-# ProClinic
+# TalMedix — Healthcare Management System
 
-> **A full-stack Hospital Management System** built with Django 6, Django REST Framework, and WeasyPrint. Designed for Indian clinics and hospitals, ProClinic covers patient registration, appointment scheduling, electronic health records (EHR), prescriptions, billing, lab reports, research publication management, and a fully automated audit trail.
+> **A full-stack Hospital Management System** built with Django 6, Django REST Framework, and WeasyPrint. Designed for Indian clinics and hospitals, TalMedix covers patient registration, appointment scheduling, electronic health records (EHR), prescriptions, billing, lab reports, research publication management, and a fully automated audit trail.
 
 ---
 
@@ -35,7 +35,7 @@
 
 ## Executive Summary
 
-ProClinic is a monolithic Django application structured around eight self-contained Django apps. It provides two distinct portal experiences: a **staff portal** (admin, doctors, receptionists, pharmacists, accountants) served through server-rendered HTML templates, and a **patient portal** accessed both through session-based HTML pages and a JWT-authenticated REST API under `/api/patient/`.
+TalMedix is a monolithic Django application structured around eight self-contained Django apps. It provides two distinct portal experiences: a **staff portal** (admin, doctors, receptionists, pharmacists, accountants) served through server-rendered HTML templates, and a **patient portal** accessed both through session-based HTML pages and a JWT-authenticated REST API under `/api/patient/`.
 
 The system was designed for deployment on [Render](https://render.com/)'s free tier with PostgreSQL and Cloudinary for media storage, but runs equally well locally with SQLite and the filesystem. Every write operation on key clinical entities is automatically captured in an immutable `AuditLog` via Django signals—no additional instrumentation is required.
 
@@ -104,7 +104,7 @@ The system was designed for deployment on [Render](https://render.com/)'s free t
 
 ## System Architecture
 
-ProClinic is a **monolithic Django application** with a layered architecture:
+TalMedix is a **monolithic Django application** with a layered architecture:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -181,7 +181,7 @@ When an `Appointment` transitions to `COMPLETED`, a `post_save` signal in `billi
 ## Project Structure
 
 ```
-ProClinic/
+TalMedix/
 ├── backend/                          # Django project root
 │   ├── core/                         # Project settings, root URLs, base views, utils
 │   │   ├── settings.py
@@ -260,8 +260,8 @@ ProClinic/
 │   ├── workflow.md                   # User journey workflows
 │   ├── proclinic_design_handoff.md   # UI/UX design handoff
 │   ├── PRD.pdf                       # Product Requirements Document
-│   ├── ProClinicSRS.pdf              # Software Requirements Specification
-│   └── ProClinic_DFD.pdf             # Data Flow Diagram
+│   ├── TalMedixSRS.pdf              # Software Requirements Specification
+│   └── TalMedix_DFD.pdf             # Data Flow Diagram
 ├── Dockerfile                        # Production container (python:3.12-slim)
 ├── docker-compose.yml                # Local dev: Django + PostgreSQL 16 + Redis 7
 ├── render.yaml                       # Render Blueprint (one-click deployment)
@@ -312,8 +312,8 @@ brew install pango cairo gdk-pixbuf libffi
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/ProClinic.git
-cd ProClinic
+git clone https://github.com/your-org/TalMedix.git
+cd TalMedix
 
 # 2. Create and activate a virtual environment
 python3 -m venv .venv
@@ -349,8 +349,8 @@ The application is now available at **http://127.0.0.1:8000/**
 
 ```bash
 # 1. Clone and enter the repository
-git clone https://github.com/your-org/ProClinic.git
-cd ProClinic
+git clone https://github.com/your-org/TalMedix.git
+cd TalMedix
 
 # 2. Copy and customise the environment file
 #    The docker-compose.yml has defaults for local use, but you can override
@@ -375,7 +375,7 @@ Services exposed:
 
 ## Environment Configuration
 
-ProClinic reads all configuration from a `.env` file located at `backend/.env`. Create this file before running for the first time.
+TalMedix reads all configuration from a `.env` file located at `backend/.env`. Create this file before running for the first time.
 
 ### Minimal `.env` for local development
 
@@ -562,7 +562,7 @@ docker run -p 8000:8000 \
 
 ## Testing Strategy and Commands
 
-ProClinic has a substantial test suite split across multiple files.
+TalMedix has a substantial test suite split across multiple files.
 
 ### Running All Tests
 
@@ -795,7 +795,7 @@ All list endpoints return paginated responses:
 
 ### Authentication Methods
 
-ProClinic supports two authentication mechanisms simultaneously:
+TalMedix supports two authentication mechanisms simultaneously:
 
 | Method | Used by | How |
 |---|---|---|
@@ -935,7 +935,7 @@ STORAGES = {
 
 ### Render (Recommended)
 
-ProClinic includes a `render.yaml` Blueprint for one-click deployment.
+TalMedix includes a `render.yaml` Blueprint for one-click deployment.
 
 #### Steps
 
@@ -1060,7 +1060,7 @@ The Gemini AI assistant system prompt enforces:
 
 ### Logging Configuration
 
-ProClinic streams all logs to **stdout** so they are captured by Render's log viewer (or any container runtime's log aggregator):
+TalMedix streams all logs to **stdout** so they are captured by Render's log viewer (or any container runtime's log aggregator):
 
 | Logger | Level | Description |
 |---|---|---|
@@ -1268,7 +1268,7 @@ License information could not be determined from the codebase. No `LICENSE` file
 
 ## Credits and Acknowledgements
 
-ProClinic was developed using the following open-source technologies:
+TalMedix was developed using the following open-source technologies:
 
 - [Django](https://www.djangoproject.com/) — Web framework
 - [Django REST Framework](https://www.django-rest-framework.org/) — REST API toolkit
@@ -1285,3 +1285,64 @@ ProClinic was developed using the following open-source technologies:
 - [psycopg2](https://www.psycopg.org/) — PostgreSQL adapter
 - [Google Generative AI (Gemini)](https://ai.google.dev/) — AI health assistant backend
 - [Render](https://render.com/) — Cloud deployment platform
+
+<!-- TALMEDIX-DEVELOPMENT-NOTES -->
+
+## Recent Development Work
+
+This section documents areas of ongoing development. The notes below describe
+changes visible in the working tree and should not be interpreted as a claim
+that every change has been fully tested or deployed.
+
+### Branding and User Interface
+
+- Updated application branding from ProClinic to TalMedix in multiple templates.
+- Updated branding across login and account-related screens.
+- Worked on the shared base template and design-system page.
+- Refined selected billing and invoice templates.
+
+### Backend and Application Configuration
+
+- Updated Django settings and application configuration.
+- Worked on patient, prescription, and publication model definitions.
+- Updated patient URL configuration.
+- Updated selected billing utility code.
+
+### Docker and Dependencies
+
+- Updated the existing Docker Compose configuration.
+- Reviewed the Python dependency list and project configuration.
+- Existing Docker and application setup instructions elsewhere in this README
+  remain the primary setup reference.
+
+### Database Migrations and File Handling
+
+- Reviewed migration files related to patient lab-report PDF fields,
+  prescription PDF fields, and publication PDF fields.
+- Apply migrations and test file uploads and PDF generation in a development
+  environment before deploying these changes.
+
+### Validation Status
+
+The changes listed here are development notes, not a declaration that all
+features are production-ready. Before release:
+
+1. Review the Django settings and environment variables.
+2. Install dependencies in the intended environment.
+3. Run database migrations.
+4. Run the project's available automated tests.
+5. Verify authentication, patient workflows, billing, prescriptions,
+   publications, PDF generation, and Docker startup.
+6. Confirm that secrets and production credentials are not committed.
+
+### Planned Improvements
+
+The following are roadmap items unless their implementation is verified
+elsewhere in the project:
+
+- Validate patient-count-based subscription limits.
+- Add or verify subscription and billing enforcement.
+- Improve deployment documentation and add verified application screenshots.
+- Document tested installation and backup/restore procedures.
+
+<!-- END TALMEDIX-DEVELOPMENT-NOTES -->
