@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SECRET_KEY: "ci-test-secret-key-not-for-production"
+      SECRET_KEY: "ci-test-only-dummy-secret-key-123456789"
 
     steps:
       - name: Checkout code
