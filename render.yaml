@@ -1,3 +1,38 @@
+# TalMedix — Render Deployment Blueprint
+# Save as render.yaml in the repository root.
+
+services:
+  - type: web
+    name: talmedix-healthcare-management-system
+    runtime: python
+    region: singapore
+    plan: starter
+
+    buildCommand: "./build.sh"
+
+    preDeployCommand: >-
+      cd backend &&
+      python manage.py migrate --no-input
+
+    startCommand: >-
+      cd backend &&
+      python manage.py check --deploy &&
+      gunicorn core.wsgi:application
+      --bind 0.0.0.0:$PORT
+      --workers 2
+      --timeout 120
+
+    # Deploy manually until testing and security checks are complete.
+    autoDeployTrigger: off
+
+    envVars:
+      - key: DEBUG
+        value: "False"
+
+      - key: RENDER
+        value: "true"
+
+      - key: SECRET_KEY
         value: "true"
 
       - key: SECRET_KEY
