@@ -1,78 +1,25 @@
-
-# render.yaml — Render Blueprint
-# Render reads this file automatically when you connect the repo via "New → Blueprint".
-# It provisions both the web service and the PostgreSQL database in one click.
-
-services:
-  - type: web
-    name: proclinic
-    runtime: python
-    region: singapore          # closest region to India; alternatives: oregon, frankfurt
-
-    buildCommand: "./build.sh"
-    startCommand: >-
-      cd backend &&
-      python manage.py migrate --no-input &&
-      python create_admin.py &&
-      gunicorn core.wsgi:application
-      --bind 0.0.0.0:$PORT --workers 2 --timeout 120
-
-    autoDeploy: true           # auto-redeploy on every push to main branch
-    plan: free                 # 512 MB RAM, 0.1 CPU, spins down after 15 min inactivity
-
-    # Persistent disk removed (Render free tier does not support disks).
-
-
-    envVars:
-      # ── Django core ──────────────────────────────────────────────────────────
-      - key: DEBUG
-        value: "False"
-
-      # Tells settings.py we are running on Render (used for IS_RENDER flag)
-      - key: RENDER
         value: "true"
 
-      # ── Auto-create admin superuser on first deploy ───────────────────────────
-      # createsuperuser --noinput reads these three vars.
-      # || true in startCommand prevents re-deploy failure if user already exists.
-      - key: DJANGO_SUPERUSER_USERNAME
-        value: admin
-
-      - key: DJANGO_SUPERUSER_EMAIL
-        value: admin@proclinic.com
-
-      - key: DJANGO_SUPERUSER_PASSWORD
-        value: Admin@12345
-
       - key: SECRET_KEY
-        generateValue: true    # Render generates a cryptographically random value
+        generateValue: true
 
+      # Configure these in Render before deployment.
       - key: ALLOWED_HOSTS
-        value: ".onrender.com,proclinic-lx2u.onrender.com"
+        sync: false
+
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+
+      # Render-managed PostgreSQL connection.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: talmedix-db
+          property: connectionString
 
       - key: PYTHON_VERSION
         value: "3.12.3"
 
-      # ── Database ─────────────────────────────────────────────────────────────
-      # DATABASE_URL is intentionally NOT stored in this file.
-      # Set it manually in: Render Dashboard → proclinic service → Environment → DATABASE_URL
-      # Format: postgresql://USER:PASSWORD@HOST:5432/DBNAME
-      # Get the value from: Render Dashboard → proclinic-db → Connections → External Database URL
-      - key: DATABASE_URL
-        sync: false
-
-      # ── Cloudinary (media uploads: PDFs, images, lab reports) ────────────────
-      # Copy values from: Cloudinary Dashboard → Settings → Access Keys
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-
-      - key: CLOUDINARY_API_KEY
-        sync: false
-
-      - key: CLOUDINARY_API_SECRET
-        sync: false
-
-      # ── Security headers ─────────────────────────────────────────────────────
+      # Verify these settings are supported by backend/core/settings.py.
       - key: SECURE_SSL_REDIRECT
         value: "True"
 
@@ -82,19 +29,16 @@ services:
       - key: CSRF_COOKIE_SECURE
         value: "True"
 
-      - key: CSRF_TRUSTED_ORIGINS
-        value: "https://proclinic-lx2u.onrender.com"
-
+      # Enable HSTS only after verifying the final HTTPS domain.
       - key: SECURE_HSTS_SECONDS
         value: "31536000"
 
       - key: SECURE_HSTS_INCLUDE_SUBDOMAINS
-        value: "True"
+        value: "False"
 
       - key: SECURE_HSTS_PRELOAD
-        value: "True"
+        value: "False"
 
-      # ── Clinic config ────────────────────────────────────────────────────────
       - key: CONSULTATION_FEE
         value: "500.00"
 
@@ -102,8 +46,9 @@ services:
         value: "0.18"
 
 databases:
-  - name: proclinic-db
-    databaseName: proclinic
-    user: proclinic_user
-    region: oregon             # DB is hosted in oregon (matches external URL hostname)
-    plan: free                 # free tier: 1 GB storage, expires after 90 days
+  - name: talmedix-db
+    databaseName: talmedix
+    user: talmedix_user
+    region: singapore
+    plan: basic-256mb
+    postgresMajorVersion: "18"
